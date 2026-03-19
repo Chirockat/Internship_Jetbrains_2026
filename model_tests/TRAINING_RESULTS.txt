@@ -1,0 +1,105 @@
+--------------- TEST 1 ---------------
+
+# Hyperparameters
+WINDOW_SIZE = 5
+MIN_COUNT = 5
+EMBEDDING_DIM = 100
+LEARNING_RATE = 0.05
+EPOCHS = 5
+
+NUM_NEGATIVE_SAMPLES = 5
+MAX_WORDS = 100000
+
+
+# RESULTS
+
+
+
+--- ODD-ONE-OUT EVALUATION ---
+Evaluated on 10 valid cases.
+Model Accuracy: 70.00%
+
+--- WORD SIMILARITY TEST ---
+
+Closest words to 'death':
+ -> elder (similarity: 0.6012)
+ -> drowned (similarity: 0.5800)
+
+Closest words to 'wolf':
+ -> rough (similarity: 0.5478)
+ -> mrs (similarity: 0.5138)
+
+Closest words to 'king':
+ -> grislybeard (similarity: 0.6416)
+ -> ordered (similarity: 0.5788)
+
+
+--------------- TEST 2 ---------------
+
+# Hyperparameters
+WINDOW_SIZE = 5
+MIN_COUNT = 5
+EMBEDDING_DIM = 50
+LEARNING_RATE = 0.025
+EPOCHS = 5
+
+MAX_WORDS = 200000
+TOP_N_SIMILAR = 2
+
+
+# RESULTS
+
+
+
+--- ODD-ONE-OUT EVALUATION ---
+Evaluated on 10 valid cases.
+Model Accuracy: 60.00%
+
+--- WORD SIMILARITY TEST ---
+
+Closest words to 'death':
+ -> woodman (similarity: 0.9368)
+ -> cock (similarity: 0.9229)
+
+Closest words to 'wolf':
+ -> soldier (similarity: 0.8890)
+ -> miller (similarity: 0.8671)
+
+Closest words to 'king':
+ -> cook (similarity: 0.7979)
+ -> woman (similarity: 0.7860)
+
+
+--------------- TEST 3 ---------------
+
+# Hyperparameters
+WINDOW_SIZE = 5
+MIN_COUNT = 5
+EMBEDDING_DIM = 100
+LEARNING_RATE = 0.03
+EPOCHS = 5
+
+NUM_NEGATIVE_SAMPLES = 5
+MAX_WORDS = 100000
+
+
+# RESULTS
+
+
+--- ODD-ONE-OUT EVALUATION ---
+Evaluated on 10 valid cases.
+Model Accuracy: 70.00%
+
+--- WORD SIMILARITY TEST ---
+
+Closest words to 'death':
+ -> escaped (similarity: 0.7068)
+ -> lightning (similarity: 0.6991)
+
+Closest words to 'wolf':
+ -> rough (similarity: 0.6733)
+ -> unicorn (similarity: 0.6565)
+
+Closest words to 'king':
+ -> grislybeard (similarity: 0.6514)
+ -> ordered (similarity: 0.6330)

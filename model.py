@@ -1,37 +1,60 @@
 import numpy as np
 
+
 class Word2VecModel:
-    def __init__(self, vocab_size, embedding_dim=100, learning_rate=0.01):
+    def __init__(self, vocab_size, embedding_dim=50, learning_rate=0.05, num_negative_samples=5):
+        np.random.seed(42)
         self.vocab_size = vocab_size
         self.embedding_dim = embedding_dim
         self.learning_rate = learning_rate
+        self.num_negative_samples = num_negative_samples
 
         np.random.seed(42)
 
         self.W1 = np.random.uniform(-0.1, 0.1, (self.vocab_size, self.embedding_dim))
         self.W2 = np.random.uniform(-0.1, 0.1, (self.embedding_dim, self.vocab_size))
 
-    def softmax(self, x):
-        e_x = np.exp(x - np.max(x))
-        return e_x / e_x.sum(axis=0)
+    def sigmoid(self, x):
+        x = np.clip(x, -10, 10)
+        return 1 / (1 + np.exp(-x))
 
-    def forward(self, center_word_id):
-        self.h = self.W1[center_word_id]
-        self.u = np.dot(self.h, self.W2)
-        self.y_pred = self.softmax(self.u)
-        return self.y_pred
+    def train_step(self, center_word_id, context_word_id):
+        h = self.W1[center_word_id]
+        loss = 0.0
 
-    def backward(self, center_word_id, context_word_id):
-        y_true = np.zeros(self.vocab_size)
-        y_true[context_word_id] = 1.0
+        dW1_center = np.zeros(self.embedding_dim)
 
-        e = self.y_pred - y_true
+        dW2_updates = []
 
-        dW2 = np.outer(self.h, e)
-        dh = np.dot(self.W2, e)
+        target_ids = [context_word_id]
+        labels = [1]
 
-        self.W2 -= self.learning_rate * dW2
-        self.W1[center_word_id] -= self.learning_rate * dh
+        while len(target_ids) < self.num_negative_samples + 1:
+            neg_id = np.random.randint(0, self.vocab_size)
+            if neg_id != context_word_id:
+                target_ids.append(neg_id)
+                labels.append(0)
 
-        loss = -np.log(self.y_pred[context_word_id] + 1e-9)
+        for target_id, label in zip(target_ids, labels):
+            w2_vector = self.W2[:, target_id]
+            z = np.dot(h, w2_vector)
+            p = self.sigmoid(z)
+
+            e = p - label
+
+            if label == 1:
+                loss -= np.log(p + 1e-9)
+            else:
+                loss -= np.log(1 - p + 1e-9)
+
+            dW2_column = e * h
+            dW1_center += e * w2_vector
+
+            dW2_updates.append((target_id, dW2_column))
+
+        for target_id, dW2_column in dW2_updates:
+            self.W2[:, target_id] -= self.learning_rate * dW2_column
+
+        self.W1[center_word_id] -= self.learning_rate * dW1_center
+
         return loss

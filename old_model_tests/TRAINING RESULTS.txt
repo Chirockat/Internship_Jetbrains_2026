@@ -1,3 +1,5 @@
+THESE ARE TESTS FOR VERSION WITHOUT NEGATIVE SAMPLING
+
 --------------------TEST 1--------------------
 # Hyperparameters
 WINDOW_SIZE = 3

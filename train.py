@@ -6,13 +6,14 @@ import json
 
 
 # Hyperparameters
-WINDOW_SIZE = 3
-MIN_COUNT = 3
-EMBEDDING_DIM = 50
-LEARNING_RATE = 0.05
+WINDOW_SIZE = 5
+MIN_COUNT = 5
+EMBEDDING_DIM = 100
+LEARNING_RATE = 0.03
 EPOCHS = 5
 
-MAX_WORDS = 30000
+NUM_NEGATIVE_SAMPLES = 5
+MAX_WORDS = 100000
 TOP_N_SIMILAR = 2
 CORPUS_PATH = 'data/corpus.txt'
 TEST_WORDS = ["death", "wolf", "king"]
@@ -22,7 +23,7 @@ TEST_WORDS = ["death", "wolf", "king"]
 EVALUATION_CASES = [
     ("dog", ["king", "queen", "prince", "dog"]),
     ("castle", ["wolf", "fox", "bear", "castle"]),
-    ("happy", ["wicked", "evil", "cruel", "happy"]),
+    ("happy", ["wicked", "evil", "dark", "happy"]),
     ("axe", ["mother", "father", "brother", "axe"]),
     ("forest", ["house", "door", "cottage", "forest"]),
     ("sun", ["dark", "black", "night", "sun"]),
@@ -119,7 +120,13 @@ def train():
     diagnose_evaluation_cases(loader.word_to_id, EVALUATION_CASES)
 
     print("\nInitializing Word2Vec model...")
-    model = Word2VecModel(vocab_size=loader.vocab_size, embedding_dim=EMBEDDING_DIM, learning_rate=LEARNING_RATE)
+    model = Word2VecModel(
+        vocab_size=loader.vocab_size,
+        embedding_dim=EMBEDDING_DIM,
+        learning_rate=LEARNING_RATE,
+        num_negative_samples=NUM_NEGATIVE_SAMPLES
+    )
+
 
     print("\nStarting training...")
     for epoch in range(EPOCHS):
@@ -129,8 +136,7 @@ def train():
                     desc=f"Epoch {epoch + 1}/{EPOCHS}", mininterval=0.5)
 
         for i, (center_word_id, context_word_id) in pbar:
-            model.forward(center_word_id)
-            loss = model.backward(center_word_id, context_word_id)
+            loss = model.train_step(center_word_id, context_word_id)
             total_loss += loss
 
             if i % 1000 == 0:
