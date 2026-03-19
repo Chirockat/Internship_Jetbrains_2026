@@ -6,6 +6,8 @@ class Word2VecModel:
         self.embedding_dim = embedding_dim
         self.learning_rate = learning_rate
 
+        np.random.seed(42)
+
         self.W1 = np.random.uniform(-0.1, 0.1, (self.vocab_size, self.embedding_dim))
         self.W2 = np.random.uniform(-0.1, 0.1, (self.embedding_dim, self.vocab_size))
 

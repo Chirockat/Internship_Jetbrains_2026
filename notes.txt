@@ -1,0 +1,13 @@
+1. What is skip gram?
+
+There are 2 methods in Word2Vec, and skip gram is one of them.
+
+Basically we looka at a one word in a sequence, and he guess the other ones
+("gram" means sequence of words (like anagram))
+
+
+2. What is other method besides skip gram
+
+CBOW does the exact opposite. It takes the surrounding words and tries to guess the center one
+It fits better larger models, so not this one.
+

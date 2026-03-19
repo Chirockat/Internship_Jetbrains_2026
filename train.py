@@ -2,18 +2,36 @@ import numpy as np
 from data_loader import DataLoader
 from model import Word2VecModel
 from tqdm import tqdm
+import json
 
-CORPUS_PATH = 'data/corpus.txt'
-MAX_WORDS = 15000
-TEST_WORDS = ["death", "wolf", "king"]
-TOP_N_SIMILAR = 2
 
+# Hyperparameters
 WINDOW_SIZE = 3
 MIN_COUNT = 3
 EMBEDDING_DIM = 50
 LEARNING_RATE = 0.05
 EPOCHS = 5
 
+MAX_WORDS = 30000
+TOP_N_SIMILAR = 2
+CORPUS_PATH = 'data/corpus.txt'
+TEST_WORDS = ["death", "wolf", "king"]
+
+
+
+EVALUATION_CASES = [
+    ("dog", ["king", "queen", "prince", "dog"]),
+    ("castle", ["wolf", "fox", "bear", "castle"]),
+    ("happy", ["wicked", "evil", "cruel", "happy"]),
+    ("axe", ["mother", "father", "brother", "axe"]),
+    ("forest", ["house", "door", "cottage", "forest"]),
+    ("sun", ["dark", "black", "night", "sun"]),
+    ("water", ["gold", "silver", "money", "water"]),
+    ("king", ["wolf", "dog", "cat", "king"]),
+    ("bird", ["door", "house", "bed", "bird"]),
+    ("stone", ["beautiful", "pretty", "young", "stone"])
+
+]
 
 def get_similar_words(target_word, word_vectors, word_to_id, id_to_word, top_n=3):
     if target_word not in word_to_id:
@@ -44,6 +62,51 @@ def get_similar_words(target_word, word_vectors, word_to_id, id_to_word, top_n=3
 
     return similar_words
 
+# For testing the model
+def evaluate_odd_one_out(word_vectors, word_to_id, test_cases):
+    correct = 0
+    total = 0
+
+    for expected_outcast, words in test_cases:
+        valid_words = [w for w in words if w in word_to_id]
+
+        if len(valid_words) < 3 or expected_outcast not in valid_words:
+            continue
+
+        vectors = np.array([word_vectors[word_to_id[w]] for w in valid_words])
+        centroid = np.mean(vectors, axis=0)
+
+        norms_vectors = np.linalg.norm(vectors, axis=1)
+        norm_centroid = np.linalg.norm(centroid)
+
+        norms_vectors[norms_vectors == 0] = 1e-9
+        norm_centroid = norm_centroid if norm_centroid != 0 else 1e-9
+
+        similarities = np.dot(vectors, centroid) / (norms_vectors * norm_centroid)
+
+        min_idx = np.argmin(similarities)
+        predicted_outcast = valid_words[min_idx]
+
+        if predicted_outcast == expected_outcast:
+            correct += 1
+        total += 1
+
+    accuracy = (correct / total * 100) if total > 0 else 0.0
+    return accuracy, total
+
+# for checking how many test cases appear
+def diagnose_evaluation_cases(word_to_id, test_cases):
+    print("\n--- DIAGNOSTIC: MISSING WORDS IN TEST CASES ---")
+    all_good = True
+    for expected_outcast, words in test_cases:
+        missing = [w for w in words if w not in word_to_id]
+        if missing:
+            print(f"Case '{expected_outcast}' missing words: {missing}")
+            all_good = False
+
+    if all_good:
+        print("All words from test cases are present in the vocabulary!")
+
 def train():
     full_text = open(CORPUS_PATH, 'r', encoding='utf-8').read()
     text_subset = " ".join(full_text.split()[:MAX_WORDS])
@@ -52,6 +115,8 @@ def train():
 
     loader = DataLoader(text_subset, window_size=WINDOW_SIZE, min_count=MIN_COUNT)
     training_data = loader.get_training_pairs()
+
+    diagnose_evaluation_cases(loader.word_to_id, EVALUATION_CASES)
 
     print("\nInitializing Word2Vec model...")
     model = Word2VecModel(vocab_size=loader.vocab_size, embedding_dim=EMBEDDING_DIM, learning_rate=LEARNING_RATE)
@@ -76,6 +141,16 @@ def train():
 
     print("\nTraining finished!")
     word_vectors = model.W1
+
+    np.save('word_vectors.npy', word_vectors)
+    with open('word_to_id.json', 'w', encoding='utf-8') as f:
+        json.dump(loader.word_to_id, f)
+    print("\nModel weights and vocabulary saved to disk.")
+
+    print("\n--- ODD-ONE-OUT EVALUATION ---")
+    accuracy, valid_tests = evaluate_odd_one_out(word_vectors, loader.word_to_id, EVALUATION_CASES)
+    print(f"Evaluated on {valid_tests} valid cases.")
+    print(f"Model Accuracy: {accuracy:.2f}%")
 
     print("\n--- WORD SIMILARITY TEST ---")
     for word in TEST_WORDS:

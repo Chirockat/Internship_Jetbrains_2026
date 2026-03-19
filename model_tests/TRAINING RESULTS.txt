@@ -1,0 +1,141 @@
+--------------------TEST 1--------------------
+# Hyperparameters
+WINDOW_SIZE = 3
+MIN_COUNT = 3
+EMBEDDING_DIM = 50
+LEARNING_RATE = 0.05
+EPOCHS = 5
+
+MAX_WORDS = 30000
+TOP_N_SIMILAR = 2
+
+
+# RESULTS
+
+
+--- ODD-ONE-OUT EVALUATION ---
+Evaluated on 10 valid cases.
+Model Accuracy: 80.00%
+
+--- WORD SIMILARITY TEST ---
+
+Closest words to 'death':
+ -> drop (similarity: 0.7253)
+ -> beans (similarity: 0.6977)
+
+Closest words to 'wolf':
+ -> stables (similarity: 0.6476)
+ -> hopped (similarity: 0.6439)
+
+Closest words to 'king':
+ -> lord (similarity: 0.6515)
+ -> listened (similarity: 0.6500)
+
+--------------------TEST 2--------------------
+# Hyperparameters
+WINDOW_SIZE = 3
+MIN_COUNT = 3
+EMBEDDING_DIM = 50
+LEARNING_RATE = 0.05
+EPOCHS = 5
+
+MAX_WORDS = 40000
+TOP_N_SIMILAR = 2
+
+
+# RESULTS
+
+
+--- ODD-ONE-OUT EVALUATION ---
+Evaluated on 10 valid cases.
+Model Accuracy: 20.00%
+
+--- WORD SIMILARITY TEST ---
+
+Closest words to 'death':
+ -> forced (similarity: 0.6569)
+ -> cord (similarity: 0.6227)
+
+Closest words to 'wolf':
+ -> business (similarity: 0.6313)
+ -> redcap (similarity: 0.6221)
+
+Closest words to 'king':
+ -> breast (similarity: 0.6521)
+ -> sultan (similarity: 0.6470)
+
+
+--------------------TEST 3--------------------
+
+# Hyperparameters
+WINDOW_SIZE = 3
+MIN_COUNT = 3
+EMBEDDING_DIM = 50
+LEARNING_RATE = 0.05
+EPOCHS = 10
+
+MAX_WORDS = 30000
+TOP_N_SIMILAR = 2
+
+
+#RESULTS
+
+
+
+--- ODD-ONE-OUT EVALUATION ---
+Evaluated on 10 valid cases.
+Model Accuracy: 70.00%
+
+--- WORD SIMILARITY TEST ---
+
+Closest words to 'death':
+ -> than (similarity: 0.5845)
+ -> catch (similarity: 0.5418)
+
+Closest words to 'wolf':
+ -> cat (similarity: 0.5820)
+ -> fox (similarity: 0.5792)
+
+Closest words to 'king':
+ -> remained (similarity: 0.5854)
+ -> lord (similarity: 0.5692)
+
+
+--------------------TEST 4--------------------
+
+# Hyperparameters
+WINDOW_SIZE = 3
+MIN_COUNT = 3
+EMBEDDING_DIM = 50
+LEARNING_RATE = 0.05
+EPOCHS = 5
+
+MAX_WORDS = 100000
+TOP_N_SIMILAR = 2
+
+
+#RESULTS
+
+
+--- ODD-ONE-OUT EVALUATION ---
+Evaluated on 10 valid cases.
+Model Accuracy: 60.00%
+
+--- WORD SIMILARITY TEST ---
+
+Closest words to 'death':
+ -> forced (similarity: 0.6859)
+ -> crushed (similarity: 0.6572)
+
+Closest words to 'wolf':
+ -> halfdone (similarity: 0.6586)
+ -> cat (similarity: 0.6572)
+
+Closest words to 'king':
+ -> he (similarity: 0.7270)
+ -> cook (similarity: 0.7064)
+
+
+-------------------
+-------------------
+TEST 1 HAD THE BEST SCORE
